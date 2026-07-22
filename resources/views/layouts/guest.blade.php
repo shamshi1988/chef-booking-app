@@ -25,7 +25,7 @@
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 relative">
             <!-- Background Image -->
             <div class="absolute inset-0 z-0">
-                <img src="https://images.unsplash.com/photo-1556910110-a5a63dfd393c?auto=format&fit=crop&q=80&w=2000" alt="Background" class="w-full h-full object-cover">
+                <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&q=80&w=2000" alt="Background" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-slate-900/50"></div>
             </div>
 

@@ -14,15 +14,42 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminRole = Role::create(['name' => 'admin']);
-        $chefRole = Role::create(['name' => 'chef']);
-        $userRole = Role::create(['name' => 'user']);
+        // Web guard roles
+        $adminRoleWeb = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $chefRoleWeb = Role::firstOrCreate(['name' => 'chef', 'guard_name' => 'web']);
+        $userRoleWeb = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
 
-        $admin = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-        ]);
-        $admin->assignRole($adminRole);
+        // Admin guard roles (so Spatie checks inside Filament admin panel work correctly)
+        $adminRoleAdmin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'admin']);
+
+        // Admin User
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $admin->assignRole([$adminRoleWeb, $adminRoleAdmin]);
+
+        // Chef User
+        $chef = User::firstOrCreate(
+            ['email' => 'chef@example.com'],
+            [
+                'name' => 'Chef User',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $chef->assignRole($chefRoleWeb);
+
+        // Regular User
+        $user = User::firstOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'name' => 'Regular User',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $user->assignRole($userRoleWeb);
     }
 }

@@ -39,7 +39,7 @@ new #[Layout('layouts.guest')] class extends Component
         <p class="text-[15px] text-slate-800">{{ __('And the best days rarely start on an empty stomach.') }}</p>
     </div>
 
-    <form wire:submit="login" class="flex flex-col gap-6">
+    <form wire:submit="login" class="flex flex-col gap-2">
         <!-- Email Address -->
         <div>
             <input wire:model="form.email" id="email" type="email" name="email" required autofocus autocomplete="username" 
@@ -49,7 +49,7 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
 
         <!-- Password -->
-        <div class="relative mt-2">
+        <div class="relative">
             <input wire:model="form.password" id="password" type="password" name="password" required autocomplete="current-password" 
                 class="block w-full px-6 py-3.5 border-gray-200 focus:border-brand-primary focus:ring-0 rounded-full shadow-sm placeholder-gray-400 text-[15px]" 
                 placeholder="{{ __('Password') }}">

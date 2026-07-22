@@ -19,6 +19,9 @@ class UserForm
                     ->email()
                     ->required(),
                 DateTimePicker::make('email_verified_at'),
+                TextInput::make('phone')
+                    ->tel()
+                    ->label('Mobile Number'),
                 TextInput::make('password')
                     ->password()
                     ->required(),

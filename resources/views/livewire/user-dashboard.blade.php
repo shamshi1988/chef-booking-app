@@ -17,7 +17,7 @@
     @else
         <div class="grid gap-6">
             @foreach($requests as $request)
-                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition">
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition" x-data="{ showDetails: false }">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <div class="flex items-center gap-3 mb-2">
@@ -46,10 +46,72 @@
                             </p>
                             <p class="text-sm text-slate-500 font-medium uppercase tracking-wider mb-4">{{ __('Proposals received') }}</p>
                             
-                            <a href="#" class="inline-block w-full md:w-auto text-center border-2 border-slate-900 text-slate-900 text-sm font-bold px-6 py-2 rounded-full hover:bg-slate-50 transition">
-                                {{ __('View Details') }}
-                            </a>
+                            <button @click="showDetails = !showDetails" class="inline-block w-full md:w-auto text-center border-2 border-slate-900 text-slate-900 text-sm font-bold px-6 py-2 rounded-full hover:bg-slate-50 transition focus:outline-none select-none">
+                                <span x-show="!showDetails">{{ __('View Details') }}</span>
+                                <span x-show="showDetails" x-cloak>{{ __('Hide Details') }}</span>
+                            </button>
                         </div>
+                    </div>
+
+                    <!-- Expandable Details Block -->
+                    <div x-show="showDetails" x-collapse class="mt-6 pt-6 border-t border-gray-100 space-y-6" x-cloak>
+                        <div>
+                            <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{{ __('Request Details') }}</h5>
+                            <p class="text-slate-700 bg-slate-50 p-4 rounded-xl text-[15px] leading-relaxed italic">
+                                {{ $request->details ?: __('No additional details provided.') }}
+                            </p>
+                        </div>
+
+                        @php
+                            $acceptedProposal = $request->proposals()->where('status', 'accepted')->first();
+                            $assignedChef = $acceptedProposal ? $acceptedProposal->chef : null;
+                        @endphp
+
+                        @if($assignedChef)
+                            <div class="bg-amber-50/50 border border-amber-100 rounded-2xl p-6 space-y-4 text-left">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-brand-primary/10 rounded-full flex items-center justify-center text-brand-primary">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-lg font-bold text-slate-900">{{ __('Your Assigned Chef') }}</h5>
+                                        <p class="text-sm text-slate-500">{{ __('Chef status confirmed and booking active.') }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div class="space-y-2">
+                                        <p><span class="font-semibold text-slate-600">{{ __('Name:') }}</span> <span class="text-slate-900 font-medium">{{ $assignedChef->name }}</span></p>
+                                        <p><span class="font-semibold text-slate-600">{{ __('Email:') }}</span> <span class="text-slate-900 font-medium">{{ $assignedChef->email }}</span></p>
+                                        <p><span class="font-semibold text-slate-600">{{ __('Mobile:') }}</span> <span class="text-slate-900 font-medium">{{ $assignedChef->phone ?: __('Not Provided') }}</span></p>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <p><span class="font-semibold text-slate-600">{{ __('Location:') }}</span> <span class="text-slate-900 font-medium">{{ $assignedChef->chefProfile?->location ?: __('Not Provided') }}</span></p>
+                                        <p><span class="font-semibold text-slate-600">{{ __('Experience:') }}</span> <span class="text-slate-900 font-medium">{{ $assignedChef->chefProfile?->experience_years ? $assignedChef->chefProfile->experience_years . ' ' . __('Years') : __('Not Provided') }}</span></p>
+                                        <p>
+                                            <span class="font-semibold text-slate-600">{{ __('Specialties:') }}</span> 
+                                            <span class="text-slate-900 font-medium">
+                                                {{ $assignedChef->chefProfile?->specialties ? implode(', ', $assignedChef->chefProfile->specialties) : __('Not Provided') }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                @if($assignedChef->chefProfile?->bio)
+                                    <div class="pt-2">
+                                        <span class="block font-semibold text-slate-600 text-sm mb-1">{{ __('Chef Bio:') }}</span>
+                                        <p class="text-slate-700 bg-white border border-gray-100 p-3 rounded-xl text-[14px] leading-relaxed">
+                                            {{ $assignedChef->chefProfile->bio }}
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="bg-slate-50 border border-gray-100 rounded-2xl p-6 text-center text-sm text-slate-500">
+                                <svg class="w-8 h-8 mx-auto mb-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                {{ __('We are matching your request with qualified private chefs. Once a chef is assigned, you will see their details and contact information here.') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endforeach

@@ -1,9 +1,22 @@
 <x-frontend-layout>
-    <div class="py-24 bg-slate-50 min-h-screen">
+    <!-- Header Banner -->
+    <div class="relative bg-[#101e21] py-12 md:py-16 overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none" style="background-image: url('{{ asset('images/internal_page_header.jpg') }}');"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#101e21] via-transparent to-[#101e21] opacity-70 pointer-events-none"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">{{ __('About Us') }}</h1>
+            <div class="flex items-center justify-center space-x-2 text-sm text-[#8a9b9e]">
+                <a href="{{ url('/') }}" class="hover:text-white transition">{{ __('Home') }}</a>
+                <span>&rsaquo;</span>
+                <span class="text-white">{{ __('About Us') }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-16 bg-slate-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h1 class="text-4xl md:text-5xl font-serif font-bold text-slate-900 mb-4">{{ __('About Us') }}</h1>
-                <p class="text-lg text-slate-600 max-w-2xl mx-auto">{{ __('Bringing the world\'s best culinary talents directly to your dining table.') }}</p>
+                <p class="text-xl text-slate-600 max-w-2xl mx-auto font-medium">{{ __('Bringing the world\'s best culinary talents directly to your dining table.') }}</p>
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -18,7 +31,7 @@
                         </p>
                     </div>
                     <div class="h-64 md:h-auto relative">
-                        <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&q=80&w=1000" alt="Chef plating food" class="absolute inset-0 w-full h-full object-cover">
+                        <img src="{{ asset('images/about_chef.jpg') }}" alt="Chef plating food" class="absolute inset-0 w-full h-full object-cover">
                     </div>
                 </div>
             </div>

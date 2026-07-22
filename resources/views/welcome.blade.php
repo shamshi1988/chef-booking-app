@@ -4,9 +4,9 @@
         x-data="{ 
             currentSlide: 0, 
             slides: [
-                'https://images.unsplash.com/photo-1556910110-a5a63dfd393c?auto=format&fit=crop&q=80&w=2000',
-                'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=2000',
-                'https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&q=80&w=2000'
+                'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&q=80&w=2000',
+                'https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&q=80&w=2000',
+                'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80&w=2000'
             ],
             next() { this.currentSlide = (this.currentSlide + 1) % this.slides.length; },
             prev() { this.currentSlide = (this.currentSlide - 1 + this.slides.length) % this.slides.length; }
@@ -54,22 +54,22 @@
     <!-- Search/Booking Widget Overlapping -->
     <div class="relative z-20 max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 -mt-[60px]">
         <div class="bg-white rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-6 md:p-8">
-            <form action="{{ route('register') }}" method="GET" class="flex flex-col md:flex-row gap-6 items-end">
+            <form action="{{ route('submit-request') }}" method="GET" class="flex flex-col md:flex-row gap-6 items-end">
                 <div class="flex-1 text-left w-full">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{{ __('Location') }}</label>
-                    <input type="text" placeholder="{{ __('Where is the event?') }}" class="w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-brand-primary px-0 py-2 text-slate-900 bg-transparent text-lg placeholder-gray-400">
+                    <input type="text" name="location" placeholder="{{ __('Where is the event?') }}" class="w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-brand-primary px-0 py-2 text-slate-900 bg-transparent text-lg placeholder-gray-400">
                 </div>
                 <div class="flex-1 text-left w-full">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{{ __('Date') }}</label>
-                    <input type="date" class="w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-brand-primary px-0 py-2 text-slate-900 bg-transparent text-lg">
+                    <input type="date" name="event_date" class="w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-brand-primary px-0 py-2 text-slate-900 bg-transparent text-lg">
                 </div>
                 <div class="flex-1 text-left w-full">
                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{{ __('Guests') }}</label>
-                    <select class="w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-brand-primary px-0 py-2 text-slate-900 bg-transparent text-lg">
-                        <option>2 {{ __('People') }}</option>
-                        <option>3-5 {{ __('People') }}</option>
-                        <option>6-10 {{ __('People') }}</option>
-                        <option>10+ {{ __('People') }}</option>
+                    <select name="guest_count" class="w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-brand-primary px-0 py-2 text-slate-900 bg-transparent text-lg">
+                        <option value="2">2 {{ __('People') }}</option>
+                        <option value="4">3-5 {{ __('People') }}</option>
+                        <option value="8">6-10 {{ __('People') }}</option>
+                        <option value="12">10+ {{ __('People') }}</option>
                     </select>
                 </div>
                 <div class="w-full md:w-auto">

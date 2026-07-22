@@ -13,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'phone'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
@@ -23,6 +23,26 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->hasRole('admin');
+    }
+
+    public function chefProfile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ChefProfile::class);
+    }
+
+    public function ratingsReceived(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Rating::class, 'chef_id');
+    }
+
+    public function ratingsGiven(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Rating::class, 'user_id');
+    }
+
+    public function averageRating(): float
+    {
+        return round($this->ratingsReceived()->avg('rating') ?? 0, 1);
     }
 
     /**

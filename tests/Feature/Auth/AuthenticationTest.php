@@ -64,7 +64,7 @@ class AuthenticationTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSeeVolt('layout.navigation');
+            ->assertSeeLivewire(\App\Livewire\FrontendLogout::class);
     }
 
     public function test_users_can_logout(): void
@@ -73,12 +73,8 @@ class AuthenticationTest extends TestCase
 
         $this->actingAs($user);
 
-        $component = Volt::test('layout.navigation');
-
-        $component->call('logout');
-
-        $component
-            ->assertHasNoErrors()
+        \Livewire\Livewire::test(\App\Livewire\FrontendLogout::class)
+            ->call('logout')
             ->assertRedirect('/');
 
         $this->assertGuest();

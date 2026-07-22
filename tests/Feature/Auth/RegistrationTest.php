@@ -33,4 +33,33 @@ class RegistrationTest extends TestCase
 
         $this->assertAuthenticated();
     }
+
+    public function test_chefs_can_register_via_chef_registration_form(): void
+    {
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'chef', 'guard_name' => 'web']);
+
+        \Livewire\Livewire::test(\App\Livewire\ChefRegistrationForm::class)
+            ->set('name', 'Chef Test')
+            ->set('email', 'chef.test@example.com')
+            ->set('phone', '9876543210')
+            ->set('password', 'password')
+            ->set('password_confirmation', 'password')
+            ->set('experience_years', 8)
+            ->set('location', 'San Francisco, CA')
+            ->set('specialties', ['Italian', 'French'])
+            ->set('bio', 'My chef bio is long enough to pass validation.')
+            ->call('registerChef')
+            ->assertRedirect(route('dashboard', absolute: false));
+
+        $this->assertAuthenticated();
+        
+        $user = \App\Models\User::where('email', 'chef.test@example.com')->first();
+        $this->assertNotNull($user);
+        $this->assertTrue($user->hasRole('chef'));
+        $this->assertEquals('9876543210', $user->phone);
+        $this->assertNotNull($user->chefProfile);
+        $this->assertEquals(8, $user->chefProfile->experience_years);
+        $this->assertEquals('San Francisco, CA', $user->chefProfile->location);
+        $this->assertEquals(['Italian', 'French'], $user->chefProfile->specialties);
+    }
 }

@@ -47,7 +47,35 @@ class ServiceRequestsTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\Action::make('assignChef')
+                    ->label('Assign Chef')
+                    ->icon('heroicon-o-user')
+                    ->color('success')
+                    ->form([
+                        \Filament\Forms\Components\Select::make('chef_id')
+                            ->label('Select Chef')
+                            ->options(fn () => \App\Models\User::role('chef', 'web')->pluck('name', 'id'))
+                            ->required(),
+                    ])
+                    ->action(function (\App\Models\ServiceRequest $record, array $data): void {
+                        $proposal = \App\Models\Proposal::create([
+                            'service_request_id' => $record->id,
+                            'chef_id' => $data['chef_id'],
+                            'menu_details' => 'Assigned directly by Administrator',
+                            'price' => $record->budget_range_max ?? 0,
+                            'status' => 'accepted',
+                        ]);
+
+                        \App\Models\Booking::create([
+                            'proposal_id' => $proposal->id,
+                            'status' => 'confirmed',
+                            'payment_status' => 'pending',
+                        ]);
+
+                        $record->update(['status' => 'closed']);
+                    })
+                    ->visible(fn (\App\Models\ServiceRequest $record) => $record->status === 'open'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

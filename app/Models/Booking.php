@@ -17,4 +17,9 @@ class Booking extends Model
     {
         return $this->belongsTo(Proposal::class);
     }
+
+    public function rating(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Rating::class);
+    }
 }
