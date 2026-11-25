@@ -17,11 +17,11 @@ class ProposalsTable
                 TextColumn::make('service_request_id')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('chef_id')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('provider.name')
+                    ->label('Professional')
+                    ->searchable(),
                 TextColumn::make('price')
-                    ->money()
+                    ->money('INR')
                     ->sortable(),
                 TextColumn::make('status')
                     ->searchable(),

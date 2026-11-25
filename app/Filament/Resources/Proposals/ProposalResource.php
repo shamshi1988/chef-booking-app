@@ -18,7 +18,16 @@ class ProposalResource extends Resource
 {
     protected static ?string $model = Proposal::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+
+    protected static ?string $modelLabel = 'offer';
+
+    protected static ?string $pluralModelLabel = 'offers';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Bookings';
+
+    protected static ?int $navigationSort = 6;
+
 
     public static function form(Schema $schema): Schema
     {

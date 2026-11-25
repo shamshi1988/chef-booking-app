@@ -9,7 +9,7 @@ class Rating extends Model
 {
     protected $fillable = [
         'user_id',
-        'chef_id',
+        'provider_id',
         'booking_id',
         'rating',
         'comment',
@@ -20,9 +20,9 @@ class Rating extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function chef(): BelongsTo
+    public function provider(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'chef_id');
+        return $this->belongsTo(User::class, 'provider_id');
     }
 
     public function booking(): BelongsTo

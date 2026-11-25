@@ -14,12 +14,15 @@ class BookingForm
                 TextInput::make('proposal_id')
                     ->required()
                     ->numeric(),
-                TextInput::make('status')
+                \Filament\Forms\Components\Select::make('status')
+                    ->options(\App\Models\Booking::STATUSES)
                     ->required()
                     ->default('confirmed'),
-                TextInput::make('payment_status')
+                \Filament\Forms\Components\Select::make('payment_status')
+                    ->options(['pending' => 'Pending', 'paid' => 'Paid'])
                     ->required()
                     ->default('pending'),
+                \Filament\Forms\Components\DateTimePicker::make('completed_at'),
             ]);
     }
 }

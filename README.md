@@ -56,3 +56,14 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Service areas & PIN code directory
+
+Bookings can be limited to the PIN codes you serve (Admin → Catalogue → Service areas).
+Restriction starts as soon as at least one area is active.
+
+To fill PIN codes automatically by state/district, import India Post's PIN code directory once:
+
+1. Download **"All India Pincode Directory"** as CSV from https://data.gov.in (free sign-in; Government Open Data License – India).
+2. Save it as `storage/app/pincodes.csv`.
+3. Run `php artisan pincodes:import` (re-run any time to refresh; it replaces the previous import).

@@ -9,8 +9,8 @@ class Proposal extends Model
 {
     protected $fillable = [
         'service_request_id',
-        'chef_id',
-        'menu_details',
+        'provider_id',
+        'message',
         'price',
         'status',
     ];
@@ -20,8 +20,8 @@ class Proposal extends Model
         return $this->belongsTo(ServiceRequest::class);
     }
 
-    public function chef(): BelongsTo
+    public function provider(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'chef_id');
+        return $this->belongsTo(User::class, 'provider_id');
     }
 }

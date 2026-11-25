@@ -1,41 +1,36 @@
-<x-frontend-layout>
-    <!-- Header Banner -->
-    <div class="relative bg-[#101e21] py-12 md:py-16 overflow-hidden">
-        <div class="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none" style="background-image: url('{{ asset('images/internal_page_header.jpg') }}');"></div>
-        <div class="absolute inset-0 bg-gradient-to-r from-[#101e21] via-transparent to-[#101e21] opacity-70 pointer-events-none"></div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">{{ __('Privacy Policy') }}</h1>
-            <div class="flex items-center justify-center space-x-2 text-sm text-[#8a9b9e]">
-                <a href="{{ url('/') }}" class="hover:text-white transition">{{ __('Home') }}</a>
-                <span>&rsaquo;</span>
-                <span class="text-white">{{ __('Privacy Policy') }}</span>
-            </div>
+<x-frontend-layout :title="__('Privacy Policy')">
+    <section class="page-hero">
+        <div class="wrap">
+            <nav class="crumbs"><a href="{{ route('home') }}">{{ __('Home') }}</a> › <span>{{ __('Privacy Policy') }}</span></nav>
+            <h1>{{ __('Privacy Policy') }}</h1>
         </div>
-    </div>
+    </section>
+    <section class="section">
+        <div class="wrap wrap-narrow">
+            <div class="card card-pad-lg prose">
+                <h2>{{ __('1. Introduction') }}</h2>
+                <p>{{ __('At :name, we value your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.', ['name' => config('app.name')]) }}</p>
 
-    <div class="py-16 bg-slate-50 min-h-screen">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-gray-100 prose max-w-none text-slate-600 leading-relaxed space-y-6">
-                <h2 class="text-2xl font-bold text-slate-900">{{ __('1. Introduction') }}</h2>
-                <p>{{ __('At ChefBooking, we value your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.') }}</p>
-                
-                <h2 class="text-2xl font-bold text-slate-900">{{ __('2. Information We Collect') }}</h2>
-                <p>{{ __('We collect information that you provide directly to us when registering an account, submitting booking requests, or communicating with us. This includes your name, email address, phone number, location, and payment details.') }}</p>
+                <h2>{{ __('2. Information We Collect') }}</h2>
+                <p>{{ __('We collect information that you provide directly to us when registering an account, submitting booking requests or enquiries, or communicating with us. This includes your name, email address, phone number, address and details about the service you need.') }}</p>
 
-                <h2 class="text-2xl font-bold text-slate-900">{{ __('3. How We Use Your Information') }}</h2>
-                <ul class="list-disc pl-5 space-y-2">
-                    <li>{{ __('To facilitate and manage bookings between clients and chefs.') }}</li>
+                <h2>{{ __('3. How We Use Your Information') }}</h2>
+                <ul>
+                    <li>{{ __('To arrange and manage bookings between customers and service professionals.') }}</li>
+                    <li>{{ __('To share your address and phone number with the professional assigned to your booking.') }}</li>
                     <li>{{ __('To verify identity, build trust, and ensure safety on our platform.') }}</li>
-                    <li>{{ __('To process secure payments through our trusted gateways.') }}</li>
                     <li>{{ __('To send updates, booking confirmations, and customer support messages.') }}</li>
                 </ul>
 
-                <h2 class="text-2xl font-bold text-slate-900">{{ __('4. Data Security') }}</h2>
+                <h2>{{ __('4. Data Security') }}</h2>
                 <p>{{ __('We implement a variety of security measures to maintain the safety of your personal information. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.') }}</p>
 
-                <h2 class="text-2xl font-bold text-slate-900">{{ __('5. Changes to This Policy') }}</h2>
-                <p>{{ __('We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.') }}</p>
+                <h2>{{ __('5. Changes to This Policy') }}</h2>
+                <p>{{ __('We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.') }}</p>
+
+                <h2>{{ __('6. Contact') }}</h2>
+                <p>{{ __('Questions about this policy? Email us at :email.', ['email' => config('site.email')]) }}</p>
             </div>
         </div>
-    </div>
+    </section>
 </x-frontend-layout>

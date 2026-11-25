@@ -2,10 +2,16 @@
 
 namespace App\Filament\Resources\ServiceRequests\Tables;
 
+use App\Filament\Resources\ServiceRequests\ServiceRequestResource;
+use App\Filament\Actions\AssignProviderAction;
+use App\Filament\Actions\CompleteBookingAction;
+use App\Models\ServiceRequest;
+use Filament\Actions\ViewAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class ServiceRequestsTable
@@ -13,69 +19,37 @@ class ServiceRequestsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->recordUrl(fn ($record) => ServiceRequestResource::getUrl('view', ['record' => $record]))
+            ->defaultSort('created_at', 'desc')
             ->columns([
-                TextColumn::make('user_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('event_date')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('event_time')
-                    ->time()
-                    ->sortable(),
-                TextColumn::make('guest_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('budget_range_min')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('budget_range_max')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('status')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('id')->label('#')->sortable(),
+                TextColumn::make('category.name')->label('Service')->badge()->sortable(),
+                TextColumn::make('user.name')->label('Customer')->searchable()
+                    ->description(fn (ServiceRequest $record) => $record->user?->phone),
+                TextColumn::make('preferred_date')->label('Date')->date('d M Y')->sortable()
+                    ->description(fn (ServiceRequest $record) => $record->timeSlotLabel()),
+                TextColumn::make('city')->searchable()->toggleable()
+                    ->description(fn (ServiceRequest $record) => $record->pincode),
+                TextColumn::make('provider.name')->label('Requested pro')->placeholder('—')->toggleable(),
+                TextColumn::make('status')->badge()
+                    ->formatStateUsing(fn (string $state) => ServiceRequest::STATUSES[$state] ?? $state)
+                    ->color(fn (string $state) => match ($state) {
+                        'open' => 'warning',
+                        'closed' => 'success',
+                        'completed' => 'primary',
+                        default => 'danger',
+                    }),
+                TextColumn::make('created_at')->label('Received')->since()->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')->options(ServiceRequest::STATUSES),
+                SelectFilter::make('service_category_id')->label('Service')->relationship('category', 'name'),
             ])
             ->recordActions([
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\Action::make('assignChef')
-                    ->label('Assign Chef')
-                    ->icon('heroicon-o-user')
-                    ->color('success')
-                    ->form([
-                        \Filament\Forms\Components\Select::make('chef_id')
-                            ->label('Select Chef')
-                            ->options(fn () => \App\Models\User::role('chef', 'web')->pluck('name', 'id'))
-                            ->required(),
-                    ])
-                    ->action(function (\App\Models\ServiceRequest $record, array $data): void {
-                        $proposal = \App\Models\Proposal::create([
-                            'service_request_id' => $record->id,
-                            'chef_id' => $data['chef_id'],
-                            'menu_details' => 'Assigned directly by Administrator',
-                            'price' => $record->budget_range_max ?? 0,
-                            'status' => 'accepted',
-                        ]);
-
-                        \App\Models\Booking::create([
-                            'proposal_id' => $proposal->id,
-                            'status' => 'confirmed',
-                            'payment_status' => 'pending',
-                        ]);
-
-                        $record->update(['status' => 'closed']);
-                    })
-                    ->visible(fn (\App\Models\ServiceRequest $record) => $record->status === 'open'),
+                ViewAction::make(),
+                AssignProviderAction::make(),
+                CompleteBookingAction::make(),
+                EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -2,7 +2,9 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Models\ServiceCategory;
 use Filament\Auth\Pages\Login as BaseLogin;
+use Illuminate\Support\Collection;
 
 class CustomLogin extends BaseLogin
 {
@@ -10,6 +12,12 @@ class CustomLogin extends BaseLogin
 
     public function getHeading(): string
     {
-        return 'ChefBooking';
+        return config('app.name');
+    }
+
+    /** Active services shown on the brand side of the login page. */
+    public function getServiceList(): Collection
+    {
+        return ServiceCategory::active()->take(8)->get(['name', 'icon']);
     }
 }

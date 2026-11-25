@@ -11,6 +11,12 @@ new class extends Component
     public string $current_password = '';
     public string $password = '';
     public string $password_confirmation = '';
+    public bool $saved = false;
+
+    public function updated(): void
+    {
+        $this->saved = false;
+    }
 
     /**
      * Update the password for the currently authenticated user.
@@ -34,46 +40,60 @@ new class extends Component
 
         $this->reset('current_password', 'password', 'password_confirmation');
 
+        $this->saved = true;
         $this->dispatch('password-updated');
     }
 }; ?>
 
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+<form wire:submit="updatePassword" class="s-card" novalidate>
+    <div class="s-head">
+        <span class="icon-badge sm"><x-ui-icon name="shield" /></span>
+        <div>
+            <h3>{{ __('Password') }}</h3>
+            <p>{{ __('Ensure your account is using a long, random password to stay secure.') }}</p>
+        </div>
+    </div>
+
+    <div class="s-body">
+        <div @class(['field', 'has-error' => $errors->has('current_password')]) style="max-width:420px">
+            <label class="label" for="update_password_current_password">{{ __('Current Password') }}</label>
+            <div class="input-icon">
+                <x-ui-icon name="shield" />
+                <input wire:model="current_password" id="update_password_current_password" type="password" class="input has-toggle" autocomplete="current-password">
+                <button type="button" class="pass-toggle" data-toggle-password="update_password_current_password" data-show="{{ __('Show') }}" data-hide="{{ __('Hide') }}">{{ __('Show') }}</button>
+            </div>
+            @error('current_password') <span class="error">{{ $message }}</span> @enderror
+        </div>
+
+        <div class="form-row form-row-2">
+            <div @class(['field', 'has-error' => $errors->has('password')])>
+                <label class="label" for="update_password_password">{{ __('New Password') }}</label>
+                <div class="input-icon">
+                    <x-ui-icon name="shield" />
+                    <input wire:model="password" id="update_password_password" type="password" class="input has-toggle" autocomplete="new-password">
+                    <button type="button" class="pass-toggle" data-toggle-password="update_password_password" data-show="{{ __('Show') }}" data-hide="{{ __('Hide') }}">{{ __('Show') }}</button>
+                </div>
+                @error('password') <span class="error">{{ $message }}</span> @enderror
+                <span class="hint">{{ __('At least 8 characters.') }}</span>
+            </div>
+            <div @class(['field', 'has-error' => $errors->has('password_confirmation')])>
+                <label class="label" for="update_password_password_confirmation">{{ __('Confirm Password') }}</label>
+                <div class="input-icon">
+                    <x-ui-icon name="shield" />
+                    <input wire:model="password_confirmation" id="update_password_password_confirmation" type="password" class="input" autocomplete="new-password">
+                </div>
+                @error('password_confirmation') <span class="error">{{ $message }}</span> @enderror
+            </div>
+        </div>
+    </div>
+
+    <div class="s-foot">
+        @if ($saved)
+            <span class="saved"><x-ui-icon name="check" /> {{ __('Password updated.') }}</span>
+        @endif
+        <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="updatePassword">
+            <span wire:loading wire:target="updatePassword" class="spinner"></span>
             {{ __('Update Password') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
-        </p>
-    </header>
-
-    <form wire:submit="updatePassword" class="mt-6 space-y-6">
-        <div>
-            <x-input-label for="update_password_current_password" :value="__('Current Password')" />
-            <x-text-input wire:model="current_password" id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
-            <x-input-error :messages="$errors->get('current_password')" class="mt-2" />
-        </div>
-
-        <div>
-            <x-input-label for="update_password_password" :value="__('New Password')" />
-            <x-text-input wire:model="password" id="update_password_password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <div>
-            <x-input-label for="update_password_password_confirmation" :value="__('Confirm Password')" />
-            <x-text-input wire:model="password_confirmation" id="update_password_password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
-
-            <x-action-message class="me-3" on="password-updated">
-                {{ __('Saved.') }}
-            </x-action-message>
-        </div>
-    </form>
-</section>
+        </button>
+    </div>
+</form>

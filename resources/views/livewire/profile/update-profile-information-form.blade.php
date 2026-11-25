@@ -10,14 +10,19 @@ new class extends Component
 {
     public string $name = '';
     public string $email = '';
+    public string $phone = '';
+    public bool $saved = false;
 
-    /**
-     * Mount the component.
-     */
     public function mount(): void
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->phone = (string) Auth::user()->phone;
+    }
+
+    public function updated(): void
+    {
+        $this->saved = false;
     }
 
     /**
@@ -30,7 +35,11 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'regex:/^(?:\+91|0)?[6-9]\d{9}$/'],
+        ], [
+            'phone.regex' => __('Please enter a valid 10-digit Indian mobile number.'),
         ]);
+        $validated['phone'] = $validated['phone'] ?: null;
 
         $user->fill($validated);
 
@@ -40,6 +49,7 @@ new class extends Component
 
         $user->save();
 
+        $this->saved = true;
         $this->dispatch('profile-updated', name: $user->name);
     }
 
@@ -62,54 +72,65 @@ new class extends Component
     }
 }; ?>
 
-<section>
-    <header>
-        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {{ __('Profile Information') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
-    </header>
-
-    <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
+<form wire:submit="updateProfileInformation" class="s-card" novalidate>
+    <div class="s-head">
+        <span class="icon-badge sm"><x-ui-icon name="user" /></span>
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input wire:model="name" id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            <h3>{{ __('Personal details') }}</h3>
+            <p>{{ __('Your name and contact details used for bookings.') }}</p>
+        </div>
+    </div>
+
+    <div class="s-body">
+        <div @class(['field', 'has-error' => $errors->has('name')])>
+            <label class="label" for="profile_name">{{ __('Full name') }}</label>
+            <div class="input-icon">
+                <x-ui-icon name="user" />
+                <input wire:model="name" id="profile_name" type="text" class="input" required autocomplete="name">
+            </div>
+            @error('name') <span class="error">{{ $message }}</span> @enderror
         </div>
 
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" name="email" type="email" class="mt-1 block w-full" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
-
-            @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
-                        {{ __('Your email address is unverified.') }}
-
-                        <button wire:click.prevent="sendVerification" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
+        <div class="form-row form-row-2">
+            <div @class(['field', 'has-error' => $errors->has('email')])>
+                <label class="label" for="profile_email">{{ __('Email') }}</label>
+                <div class="input-icon">
+                    <x-ui-icon name="mail" />
+                    <input wire:model="email" id="profile_email" type="email" class="input" required autocomplete="username">
                 </div>
-            @endif
+                @error('email') <span class="error">{{ $message }}</span> @enderror
+            </div>
+            <div @class(['field', 'has-error' => $errors->has('phone')])>
+                <label class="label" for="profile_phone">{{ __('Mobile number') }}</label>
+                <div class="input-icon">
+                    <x-ui-icon name="phone" />
+                    <input wire:model="phone" id="profile_phone" type="tel" class="input" autocomplete="tel" placeholder="9876543210">
+                </div>
+                @error('phone') <span class="error">{{ $message }}</span> @enderror
+                <span class="hint">{{ __('We call this number to confirm your bookings.') }}</span>
+            </div>
         </div>
 
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+        @if (auth()->user() instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! auth()->user()->hasVerifiedEmail())
+            <div class="alert alert-info">
+                <span>
+                    {{ __('Your email address is unverified.') }}
+                    <button type="button" wire:click.prevent="sendVerification" class="link" style="background:none;border:0;padding:0;cursor:pointer;font:inherit;">{{ __('Click here to re-send the verification email.') }}</button>
+                    @if (session('status') === 'verification-link-sent')
+                        <br><strong>{{ __('A new verification link has been sent to your email address.') }}</strong>
+                    @endif
+                </span>
+            </div>
+        @endif
+    </div>
 
-            <x-action-message class="me-3" on="profile-updated">
-                {{ __('Saved.') }}
-            </x-action-message>
-        </div>
-    </form>
-</section>
+    <div class="s-foot">
+        @if ($saved)
+            <span class="saved"><x-ui-icon name="check" /> {{ __('Saved.') }}</span>
+        @endif
+        <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="updateProfileInformation">
+            <span wire:loading wire:target="updateProfileInformation" class="spinner"></span>
+            {{ __('Save changes') }}
+        </button>
+    </div>
+</form>

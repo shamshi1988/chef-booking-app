@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
     {
         // Web guard roles
         $adminRoleWeb = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
-        $chefRoleWeb = Role::firstOrCreate(['name' => 'chef', 'guard_name' => 'web']);
+        $providerRoleWeb = Role::firstOrCreate(['name' => 'provider', 'guard_name' => 'web']);
         $userRoleWeb = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
 
         // Admin guard roles (so Spatie checks inside Filament admin panel work correctly)
@@ -32,15 +32,15 @@ class RoleSeeder extends Seeder
         );
         $admin->assignRole([$adminRoleWeb, $adminRoleAdmin]);
 
-        // Chef User
-        $chef = User::firstOrCreate(
-            ['email' => 'chef@example.com'],
+        // Service provider (professional) user
+        $provider = User::firstOrCreate(
+            ['email' => 'provider@example.com'],
             [
-                'name' => 'Chef User',
+                'name' => 'Demo Professional',
                 'password' => Hash::make('password'),
             ]
         );
-        $chef->assignRole($chefRoleWeb);
+        $provider->assignRole($providerRoleWeb);
 
         // Regular User
         $user = User::firstOrCreate(

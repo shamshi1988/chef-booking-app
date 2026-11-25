@@ -1,11 +1,11 @@
-<x-frontend-layout>
-    <div class="py-12 bg-slate-50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(auth()->user()->hasRole('chef'))
-                <livewire:chef-dashboard />
+<x-frontend-layout :title="__('My Account')">
+    <section class="section section-soft" style="min-height:70vh;">
+        <div class="wrap">
+            @if (auth()->user()->isProvider())
+                <livewire:provider-dashboard />
             @else
                 <livewire:user-dashboard />
             @endif
         </div>
-    </div>
+    </section>
 </x-frontend-layout>

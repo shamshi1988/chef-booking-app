@@ -1,29 +1,55 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@php
+    $me = auth()->user();
+    $isPro = $me->isProvider();
+    $bookingCount = \App\Models\ServiceRequest::where('user_id', $me->id)->count();
+@endphp
+<x-frontend-layout :title="__('Profile settings')">
+    <section class="page-hero" style="padding-bottom:32px;">
+        <div class="wrap">
+            <nav class="crumbs">
+                <a href="{{ route('home') }}">{{ __('Home') }}</a> ›
+                <a href="{{ route('dashboard') }}">{{ __('My Account') }}</a> ›
+                <span>{{ __('Profile settings') }}</span>
+            </nav>
+            <h1>{{ __('Profile settings') }}</h1>
+            <p>{{ __('Update your account details and password.') }}</p>
+        </div>
+    </section>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    <livewire:profile.update-profile-information-form />
-                </div>
-            </div>
+    <section class="section section-soft" style="padding-top:32px;">
+        <div class="wrap settings">
+            <aside class="settings-side">
+                <div class="card profile-card">
+                    <div class="profile-avatar">{{ mb_strtoupper(mb_substr($me->name, 0, 1)) }}</div>
+                    <h2>{{ $me->name }}</h2>
+                    <p class="email">{{ $me->email }}</p>
+                    <span class="badge {{ $isPro ? 'badge-primary' : 'badge-verified' }}">{{ $isPro ? __('Professional') : __('Customer') }}</span>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    <livewire:profile.update-password-form />
+                    <dl class="profile-meta">
+                        <div><dt>{{ __('Member since') }}</dt><dd>{{ $me->created_at?->translatedFormat('M Y') }}</dd></div>
+                        <div><dt>{{ __('Mobile number') }}</dt><dd>{{ $me->phone ?: '—' }}</dd></div>
+                        @unless ($isPro)
+                            <div><dt>{{ __('Bookings') }}</dt><dd>{{ $bookingCount }}</dd></div>
+                        @endunless
+                    </dl>
                 </div>
-            </div>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    <livewire:profile.delete-user-form />
-                </div>
+                <nav class="card side-links" aria-label="{{ __('My Account') }}">
+                    <a href="{{ route('dashboard') }}"><x-ui-icon name="calendar" /> {{ $isPro ? __('My Jobs') : __('My Bookings') }}</a>
+                    @if ($isPro)
+                        <a href="{{ route('dashboard') }}"><x-ui-icon name="badge" /> {{ __('Professional profile') }}</a>
+                    @else
+                        <a href="{{ route('book') }}"><x-ui-icon name="sparkles" /> {{ __('Book a Service') }}</a>
+                    @endif
+                    <a href="{{ route('contact') }}"><x-ui-icon name="chat" /> {{ __('Help & support') }}</a>
+                </nav>
+            </aside>
+
+            <div class="settings-main">
+                <livewire:profile.update-profile-information-form />
+                <livewire:profile.update-password-form />
+                <livewire:profile.delete-user-form />
             </div>
         </div>
-    </div>
-</x-app-layout>
+    </section>
+</x-frontend-layout>

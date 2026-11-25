@@ -25,14 +25,33 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasRole('admin');
     }
 
-    public function chefProfile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function providerProfile(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(ChefProfile::class);
+        return $this->hasOne(ProviderProfile::class);
+    }
+
+    /**
+     * Users with the "provider" role. Unlike Spatie's role() scope this does not throw
+     * when the role has not been created yet (e.g. on a fresh install).
+     */
+    public function scopeProviders(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        return $query->whereHas('roles', fn ($q) => $q->where('name', 'provider')->where('guard_name', 'web'));
+    }
+
+    public function isProvider(): bool
+    {
+        return $this->hasRole('provider', 'web');
+    }
+
+    public function serviceRequests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ServiceRequest::class);
     }
 
     public function ratingsReceived(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Rating::class, 'chef_id');
+        return $this->hasMany(Rating::class, 'provider_id');
     }
 
     public function ratingsGiven(): \Illuminate\Database\Eloquent\Relations\HasMany

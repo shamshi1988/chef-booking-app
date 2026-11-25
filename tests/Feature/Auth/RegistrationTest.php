@@ -34,32 +34,42 @@ class RegistrationTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function test_chefs_can_register_via_chef_registration_form(): void
+    public function test_professionals_can_register_via_partner_form(): void
     {
-        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'chef', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'provider', 'guard_name' => 'web']);
+        $category = \App\Models\ServiceCategory::create(['name' => 'Plumber', 'slug' => 'plumber', 'icon' => 'wrench']);
 
-        \Livewire\Livewire::test(\App\Livewire\ChefRegistrationForm::class)
-            ->set('name', 'Chef Test')
-            ->set('email', 'chef.test@example.com')
+        \Livewire\Livewire::test(\App\Livewire\ProviderRegistrationForm::class)
+            ->set('name', 'Ravi Kumar')
+            ->set('email', 'ravi@example.com')
             ->set('phone', '9876543210')
             ->set('password', 'password')
             ->set('password_confirmation', 'password')
+            ->set('service_category_id', $category->id)
             ->set('experience_years', 8)
-            ->set('location', 'San Francisco, CA')
-            ->set('specialties', ['Italian', 'French'])
-            ->set('bio', 'My chef bio is long enough to pass validation.')
-            ->call('registerChef')
+            ->set('location', 'Kolkata')
+            ->set('skills', 'Leak repair, Tap fitting , Leak repair')
+            ->set('bio', 'Plumber with eight years of experience in homes and offices.')
+            ->call('register')
+            ->assertHasNoErrors()
             ->assertRedirect(route('dashboard', absolute: false));
 
         $this->assertAuthenticated();
-        
-        $user = \App\Models\User::where('email', 'chef.test@example.com')->first();
-        $this->assertNotNull($user);
-        $this->assertTrue($user->hasRole('chef'));
+
+        $user = \App\Models\User::where('email', 'ravi@example.com')->first();
+        $this->assertTrue($user->hasRole('provider'));
         $this->assertEquals('9876543210', $user->phone);
-        $this->assertNotNull($user->chefProfile);
-        $this->assertEquals(8, $user->chefProfile->experience_years);
-        $this->assertEquals('San Francisco, CA', $user->chefProfile->location);
-        $this->assertEquals(['Italian', 'French'], $user->chefProfile->specialties);
+        $this->assertEquals($category->id, $user->providerProfile->service_category_id);
+        $this->assertEquals(8, $user->providerProfile->experience_years);
+        $this->assertEquals(['Leak repair', 'Tap fitting'], $user->providerProfile->skills);
+        $this->assertFalse($user->providerProfile->is_verified);
+    }
+
+    public function test_partner_registration_requires_a_service(): void
+    {
+        \Livewire\Livewire::test(\App\Livewire\ProviderRegistrationForm::class)
+            ->set('name', 'No Service')
+            ->call('register')
+            ->assertHasErrors(['service_category_id' => 'required']);
     }
 }

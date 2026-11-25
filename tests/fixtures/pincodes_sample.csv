@@ -1,0 +1,8 @@
+circlename,regionname,divisionname,officename,pincode,officetype,delivery,district,statename,latitude,longitude
+West Bengal Circle,Calcutta Region,Calcutta North Division,Salt Lake S.O,700091,PO,Delivery,KOLKATA,WEST BENGAL,22.58,88.41
+West Bengal Circle,Calcutta Region,Calcutta North Division,Bidhannagar CC Block S.O,700091,PO,Delivery,KOLKATA,WEST BENGAL,22.58,88.41
+West Bengal Circle,Calcutta Region,Calcutta North Division,Kankurgachi S.O,700054,PO,Delivery,KOLKATA,WEST BENGAL,22.57,88.39
+West Bengal Circle,Calcutta Region,Calcutta South Division,Ballygunge S.O,700019,PO,Delivery,KOLKATA,WEST BENGAL,22.52,88.36
+West Bengal Circle,Calcutta Region,Barasat Division,Barasat H.O,700124,HO,Delivery,NORTH 24 PARGANAS,WEST BENGAL,22.72,88.48
+Maharashtra Circle,Mumbai Region,Mumbai West Division,Andheri East S.O,400069,PO,Delivery,MUMBAI,MAHARASHTRA,19.11,72.86
+Maharashtra Circle,Mumbai Region,Mumbai West Division,Bad Row,12AB,PO,Delivery,MUMBAI,MAHARASHTRA,,
